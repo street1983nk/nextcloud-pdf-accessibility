@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!--
+	Store metadata of the External App. Taken over from Findling Backend 1.6.x.
+
+	The store does not validate this file as it stands: it first runs it through
+	pre-info.xslt, which copies only the elements it knows (inside external-app:
+	docker-install, scopes, system, environment-variables). The routes block is
+	dropped there silently. AppAPI reads the routes back out of the release
+	archive at installation time, so the archive has to carry this file byte for
+	byte (scripts/release/store-archive.sh checks that with cmp).
+
+	Route urls are regular expressions, not path names. HaRP compares with
+	re.match(url, path) and the path has a leading slash, so the canonical form is
+	^/<name>$. Signed AppAPI requests skip the route check; the block governs
+	unsigned direct access only.
+
+	Lockstep: <version>, <image-tag>, the version in pyproject.toml and the git
+	tag v<version> are one number. tests/test_store_metadata.py holds them.
+-->
+<info>
+	<id>pdf_accessibility</id>
+	<name>PDF Accessibility</name>
+	<name lang="de">PDF Accessibility</name>
+	<name lang="fr">PDF Accessibility</name>
+	<summary>Checks PDF files for accessibility according to PDF/UA, locally on your server</summary>
+	<summary lang="de">Prüft PDF-Dateien auf Barrierefreiheit nach PDF/UA, lokal auf dem eigenen Server</summary>
+	<summary lang="fr">Vérifie l'accessibilité des fichiers PDF selon PDF/UA, localement sur votre serveur</summary>
+	<description><![CDATA[What PDF Accessibility is:
+- Check against PDF/UA-1 with veraPDF
+- Report in German, English and French, with hints on how to fix each finding
+- Privacy: everything runs locally, no telemetry, nothing leaves your server
+Requirements:
+- Nextcloud 33 to 35, AppAPI with a deploy daemon (HaRP recommended)
+- CPU: amd64 and arm64]]></description>
+	<description lang="de"><![CDATA[Was PDF Accessibility ist:
+- Prüfung nach PDF/UA-1 mit veraPDF
+- Prüfbericht auf Deutsch, Englisch und Französisch, mit Hinweisen zur Behebung
+- Datenschutz: alles läuft lokal, keine Telemetrie, nichts verlässt den Server
+Anforderungen:
+- Nextcloud 33 bis 35, AppAPI mit Deploy-Daemon (HaRP empfohlen)
+- CPU: amd64 und arm64]]></description>
+	<description lang="fr"><![CDATA[Ce qu'est PDF Accessibility :
+- Vérification selon PDF/UA-1 avec veraPDF
+- Rapport en allemand, en anglais et en français, avec des conseils de correction
+- Confidentialité : tout fonctionne localement, aucune télémétrie, rien ne quitte votre serveur
+Prérequis :
+- Nextcloud 33 à 35, AppAPI avec un démon de déploiement (HaRP recommandé)
+- CPU : amd64 et arm64]]></description>
+	<version>0.1.0</version>
+	<licence>AGPL-3.0-or-later</licence>
+	<author>street1983nk</author>
+	<category>tools</category>
+	<website>https://github.com/street1983nk/nextcloud-pdf-accessibility</website>
+	<bugs>https://github.com/street1983nk/nextcloud-pdf-accessibility/issues</bugs>
+	<repository type="git">https://github.com/street1983nk/nextcloud-pdf-accessibility.git</repository>
+	<donation type="paypal">https://paypal.me/KhaledCherifDev</donation>
+	<dependencies>
+		<nextcloud min-version="33" max-version="35"/>
+	</dependencies>
+	<external-app>
+		<docker-install>
+			<registry>ghcr.io</registry>
+			<image>street1983nk/pdf_accessibility</image>
+			<image-tag>0.1.0</image-tag>
+		</docker-install>
+		<routes>
+			<route>
+				<url>^/status$</url>
+				<verb>GET</verb>
+				<access_level>ADMIN</access_level>
+				<headers_to_exclude>[]</headers_to_exclude>
+				<bruteforce_protection>[401]</bruteforce_protection>
+			</route>
+		</routes>
+		<environment-variables>
+			<variable>
+				<name>PDF_ACCESSIBILITY_LOG_LEVEL</name>
+				<display-name>Log level</display-name>
+				<description>One of debug, info, warning, error. Anything else falls back to info. Only debug shows the request lines of the HTTP client.</description>
+				<default>info</default>
+			</variable>
+		</environment-variables>
+	</external-app>
+</info>
